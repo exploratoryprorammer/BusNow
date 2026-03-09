@@ -3,9 +3,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 import * as Notifications from 'expo-notifications';
-import HomeScreen from './screens/HomeScreen';
 
-// How notifications appear when app is in foreground
+import ScheduleScreen from './screens/ScheduleScreen';
+import NotificationsScreen from './screens/NotificationsScreen';
+import TripScreen from './screens/TripScreen';
+
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
     shouldShowAlert: true,
@@ -16,9 +18,11 @@ Notifications.setNotificationHandler({
 
 const Tab = createBottomTabNavigator();
 
+const ACCENT = '#2563EB';
+const MUTED  = '#9CA3AF';
+
 export default function App() {
   useEffect(() => {
-    // Ask for notification permission on launch
     Notifications.requestPermissionsAsync();
   }, []);
 
@@ -28,22 +32,32 @@ export default function App() {
         screenOptions={({ route }) => ({
           headerShown: false,
           tabBarStyle: {
-            backgroundColor: '#0f0f11',
-            borderTopColor: '#2a2a35',
+            backgroundColor: '#FFFFFF',
+            borderTopColor: '#E5E7EB',
+            borderTopWidth: 1,
+            paddingTop: 6,
+            height: 80,
           },
-          tabBarActiveTintColor: '#f5a623',
-          tabBarInactiveTintColor: '#6b6b80',
-          tabBarIcon: ({ color, size }) => {
+          tabBarLabelStyle: {
+            fontSize: 11,
+            fontWeight: '600',
+            marginBottom: 8,
+          },
+          tabBarActiveTintColor: ACCENT,
+          tabBarInactiveTintColor: MUTED,
+          tabBarIcon: ({ color, size, focused }) => {
             const icons = {
-              Home: 'home',
-              Schedule: 'time',
-              Routes: 'list',
+              Schedule:      focused ? 'calendar'          : 'calendar-outline',
+              Notifications: focused ? 'notifications'     : 'notifications-outline',
+              'Plan Trip':   focused ? 'navigate'          : 'navigate-outline',
             };
-            return <Ionicons name={icons[route.name]} size={size} color={color} />;
+            return <Ionicons name={icons[route.name]} size={22} color={color} />;
           },
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
+        <Tab.Screen name="Schedule"      component={ScheduleScreen} />
+        <Tab.Screen name="Notifications" component={NotificationsScreen} />
+        <Tab.Screen name="Plan Trip"     component={TripScreen} />
       </Tab.Navigator>
     </NavigationContainer>
   );
